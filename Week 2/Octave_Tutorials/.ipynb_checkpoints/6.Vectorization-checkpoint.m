@@ -8,8 +8,3 @@ endfor
 
 % vectorized implementation (optimized lin alg routine)
 prediction = theta' * x;
-
-% example
-
-A = [1, 3, 5, 9]
-x = [3; 9; 12; 15]
