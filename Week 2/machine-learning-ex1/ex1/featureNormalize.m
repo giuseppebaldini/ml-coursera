@@ -15,7 +15,7 @@ sigma = zeros(1, size(X, 2));
 %               of the feature and subtract it from the dataset,
 %               storing the mean value in mu. Next, compute the 
 %               standard deviation of each feature and divide
-%               each feature by it's standard deviation, storing
+%               each feature by its standard deviation, storing
 %               the standard deviation in sigma. 
 %
 %               Note that X is a matrix where each column is a 
@@ -26,11 +26,11 @@ sigma = zeros(1, size(X, 2));
 % Hint: You might find the 'mean' and 'std' functions useful.
 %       
 
-
-
-
-
-
+for i = 1:size(X,2),
+  mu(i) = mean(X(:,i));
+  sigma(i) = std(X(:,i));
+  X_norm(:,i) = (X_norm(:,i) - mu(i)) / sigma(i);
+endfor
 
 
 
