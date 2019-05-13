@@ -15,11 +15,11 @@ p = zeros(m, 1);
 %               You should set p to a vector of 0's and 1's
 %
 
+% Define our predictions as usual
+h = sigmoid(X * theta);
 
-
-
-
-
+% Check for which values we predict prob Y = 1 (label 1) >= 0.5
+p = (h >= 0.5);
 
 % =========================================================================
 
