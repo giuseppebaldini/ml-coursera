@@ -18,14 +18,20 @@ grad = zeros(size(theta));
 %               derivatives of the cost w.r.t. each parameter in theta
 
 h = sigmoid(X * theta);
+
+% excluding the bias feature by setting theta = 0
 theta(1) = 0;
+
+% size(theta) is n x 1, we need a scalar (1x1) so we will need to transpose
+% note: sum(theta.^2) also works
 theta_sq = theta' * theta;
 
 J = 1/m * sum(-y' * log(h) - ((1 - y') * log(1 - h))) + ((lambda / (2 * m)) * theta_sq);
 
-% grad = 1/m * X' * (h - y);
+grad = 1/m * X' * (h - y) + ((lambda/m) * theta);
 
-
+% lambda is a given (for now) but playing with it gives a good 
+% idea of how it may determine under/overfitting
 
 % =============================================================
 
