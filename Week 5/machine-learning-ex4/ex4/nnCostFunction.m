@@ -62,25 +62,27 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-y_matrix = eye(num_labels)(y,:);
+# Part 1: Feedforward
 
-# similar to ex3
+a1 = [ones(m,1) X]
 
-a1 = [ones(size(X, 1), 1) X];
+z2 = a1 * Theta1';
+a2 = sigmoid(z2);
+a2 = [ones(size(a2,1),1) a2];
+z3 = a2 * Theta2';
 
-z2 = a1 * Theta1' ;
+# h = z3
+h = sigmoid(z3);
 
-a2 = [ones(size(z2, 1), 1) sigmoid(z2)];
+# map vector y into binary vector of 1s and 0s
+labels = zeros(num_labels, m);
 
-a3 = sigmoid(a2 * Theta2');
+for i = 1:m,
+  labels(y(i),i) = 1;
+endfor
 
-# cost function non-regularized
-
-a3 = h
-
-J = 1/m * sum(-y' * log(h) - ((1 - y') * log(1 - h))) 
-
-# ((lambda / (2 * m)) * theta_sq);
+# our cost function formula
+J = 1/m * sum(sum(-labels' .* log(h) - ((1 - labels') .* log(1 - h))));
 
 % -------------------------------------------------------------
 
