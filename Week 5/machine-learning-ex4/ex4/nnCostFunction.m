@@ -38,7 +38,41 @@ Theta2_grad = zeros(size(Theta2));
 %         variable J. After implementing Part 1, you can verify that your
 %         cost function computation is correct by verifying the cost
 %         computed in ex4.m
-%
+
+# Part 1: Forward propagation
+
+X = [ones(m,1) X];
+
+z2 = Theta1 * X';
+a2 = sigmoid(z2);
+a2 = [ones(m,1) a2'];
+
+z3 = Theta2 * a2'; 
+a3 = sigmoid(z3);
+
+h_t = a3;
+
+# map vector y into binary vector of 1s and 0s
+y_t = zeros(num_labels, m);
+
+for i = 1:m,
+  y_t(y(i),i) = 1;
+endfor
+
+
+# our cost function formula
+J = 1/m * sum(sum(-y_t .* log(h_t) - (1 - y_t) .* log(1 - h_t) ));
+
+# Regularization
+# excluding the bias units
+
+T1 = Theta1(:,2:end)
+T2 = Theta2(:,2:end)
+
+reg_term = (lambda / (2 * m)) * (sum(sum(T1.^2)) + sum(sum(T2.^2)));
+
+J = J + reg_term;
+
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
 %         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
@@ -53,40 +87,53 @@ Theta2_grad = zeros(size(Theta2));
 %         Hint: We recommend implementing backpropagation using a for-loop
 %               over the training examples if you are implementing it for the 
 %               first time.
-%
+
+# Part 2: Backpropagation
+
+for i = 1:m
+  
+  # input layer
+  a1 = X(i,:);
+  
+  # hidden layer
+  z2 = Theta1 * a1';
+  a2 = sigmoid(z2);
+  
+  # adding bias
+  a2 = [1 ; a2]; 
+  
+  z3 = Theta2 * a2;
+  a3 = sigmoid(z3);
+  
+  delta_3 = a3 - y_t(:,i);
+  
+  z2=[1; z2];
+  delta_2 = (Theta2' * delta_3) .* sigmoidGradient(z2);
+  
+  # excluding bias row
+  delta_2 = delta_2(2:end);
+  
+  Theta2_grad = Theta2_grad + delta_3 * a2';
+  Theta1_grad = Theta1_grad + delta_2 * a1;
+  
+endfor
+
+% -------------------------------------------------------------
+
+Theta2_grad = (1/m) * Theta2_grad; 
+Theta1_grad = (1/m) * Theta1_grad;
+
+% =========================================================================
+
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
 %               backpropagation. That is, you can compute the gradients for
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
-%
 
-# Part 1: Feedforward
-
-a1 = [ones(m,1) X]
-
-z2 = a1 * Theta1';
-a2 = sigmoid(z2);
-a2 = [ones(size(a2,1),1) a2];
-z3 = a2 * Theta2';
-
-# h = z3
-h = sigmoid(z3);
-
-# map vector y into binary vector of 1s and 0s
-labels = zeros(num_labels, m);
-
-for i = 1:m,
-  labels(y(i),i) = 1;
-endfor
-
-# our cost function formula
-J = 1/m * sum(sum(-labels' .* log(h) - ((1 - labels') .* log(1 - h))));
-
-% -------------------------------------------------------------
-
-% =========================================================================
+Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + ((lambda/m) * Theta1(:, 2:end));
+Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + ((lambda/m) * Theta2(:, 2:end));
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
